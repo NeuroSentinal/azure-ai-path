@@ -1,13 +1,13 @@
 # Repository Audit
 
-**Date:** 2025-01-XX
-**Scope:** All non-`.git` files
+**Date:** 2025-07-10  
+**Scope:** All non-`.git` files (6,849 lines across 4 files)
 
 ---
 
-## 1. TODO/FIXME Comments
+## 1. TODO / FIXME / HACK / XXX Comments
 
-**None found.** No `TODO` or `FIXME` markers exist in any file.
+**None found.** No `TODO`, `FIXME`, `HACK`, or `XXX` markers exist in any source or documentation file.
 
 ---
 
@@ -15,19 +15,19 @@
 
 **No test infrastructure exists.** The repository contains only:
 
-| File | Type |
-|---|---|
-| `.gitignore` | Git config |
-| `docs/Azure-AI-Learning-Path-2026.md` | Learning-path document (~1,888 lines) |
-| `docs/Phase-0-Python-Curriculum.md` | Python curriculum (~4,961 lines) |
+| File | Lines | Type |
+|---|---|---|
+| `.gitignore` | 7 | Git config |
+| `docs/Azure-AI-Learning-Path-2026.md` | 1,888 | Certification learning path |
+| `docs/Phase-0-Python-Curriculum.md` | 4,961 | Python pre-work curriculum |
 
-No test files, no `requirements.txt`, no `Makefile`, no `pytest.ini`, no `Dockerfile` — nothing to execute. The curriculum documents *describe* Python exercises and labs but do not contain runnable code or assertions.
+No test files, `Makefile`, `requirements.txt`, `package.json`, `Dockerfile`, or any other runnable artifact. The curriculum documents *describe* exercises but contain no standalone runnable code or assertions.
 
 ---
 
 ## 3. Dependencies
 
-**None.** No dependency manifest files found (`requirements.txt`, `package.json`, `Cargo.toml`, `pyproject.toml`, `Pipfile`, `go.mod`, etc.). This is a documentation-only repo.
+**None.** No dependency manifests of any kind (`requirements.txt`, `package.json`, `Cargo.toml`, `pyproject.toml`, `Pipfile`, `go.mod`, etc.). This is a documentation-only repository.
 
 ---
 
@@ -35,13 +35,14 @@ No test files, no `requirements.txt`, no `Makefile`, no `pytest.ini`, no `Docker
 
 | Check | Result |
 |---|---|
-| Hardcoded secrets / API keys | **None.** `.env.example` in curriculum docs contains blank placeholder values only. |
+| Hardcoded secrets / API keys | **None.** No `.env`, `.pem`, `.key`, or credential files present. |
 | World-writable files | **None.** All files are `644`; directories are `755`. |
-| Unpinned container images | **N/A** — no Dockerfiles or `docker-compose` files present. |
+| Unpinned container images | **N/A** — no Dockerfiles or `docker-compose` files. |
 | Sensitive data in `.gitignore` | ✅ Properly ignores `.env`, `.venv/`, `__pycache__/`, `*.pyc`, `logs/`, `transcripts/`. |
+| Externally linked URLs | **Note:** Learning paths embed Microsoft Learn URLs that will rot when exams retire (AI-900/AI-102 already listed as retired in the docs themselves). Not a security issue but worth periodic review. |
 
 ---
 
 ## Summary
 
-This is a **documentation-only repository** — two markdown files covering an Azure AI certification learning path and a Python pre-work curriculum. There is no code to run, no dependencies to pin, no test suite to execute, and no security issues to flag. The audit is trivially clean by nature of the repo's content.
+This is a **documentation-only repository** — two markdown files covering an Azure AI certification learning path and a Python pre-work curriculum. No code, no dependencies, no tests, no security issues. Clean by nature.
