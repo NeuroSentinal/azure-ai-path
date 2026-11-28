@@ -1,51 +1,51 @@
 # Repository Audit
 
-**Date:** 2025-01-20  
-**Scope:** All non-`.git` files
+Scope: all tracked files (`.gitignore`, `docs/Azure-AI-Learning-Path-2026.md`, `docs/Phase-0-Python-Curriculum.md`).
+The repo is documentation only (Markdown, ~6,850 lines). It has no source code, manifests, or CI.
 
----
+## 1. TODO / FIXME comments
 
-## 1. TODO/FIXME Comments
+None found. A case-sensitive search for `TODO` and `FIXME` across the repo, excluding `.git` and this file, returned no matches.
 
-**None found.** No `TODO`, `FIXME`, `HACK`, `XXX`, or `DEPRECATED` markers in any source file. The only matches were the word "RETIRED" in `docs/Azure-AI-Learning-Path-2026.md` (referring to retired Microsoft certs) — not actionable code markers.
+## 2. Tests
 
----
+There is no test suite: no test files, no `pytest`/`package.json`/`Makefile`, no CI config. Nothing was run, so there are no failures to report.
+The Phase 0 curriculum teaches pytest, but the repo has no code to test.
 
-## 2. Test Suite
+## 3. Dependencies (outdated / unpinned)
 
-**No test infrastructure exists.** The repo contains only:
+There are no manifest or lock files. The only dependency references are install commands inside the docs, and these are unpinned:
 
-| File | Type |
-|---|---|
-| `.gitignore` | Git config |
-| `AUDIT.md` | This file |
-| `docs/Azure-AI-Learning-Path-2026.md` | Certification learning path (~470 lines) |
-| `docs/Phase-0-Python-Curriculum.md` | Python pre-work curriculum (~470 lines) |
+| Location | Command | Issue |
+|---|---|---|
+| Azure-AI-Learning-Path-2026.md:487 | `pip install azure-ai-projects azure-identity` | unpinned |
+| Azure-AI-Learning-Path-2026.md:1117 | `pip install azure-ai-projects azure-identity azure-search-documents azure-ai-evaluation` | unpinned |
+| Azure-AI-Learning-Path-2026.md:1207 | `pip install agent-framework` | unpinned |
+| Azure-AI-Learning-Path-2026.md:1565 | `pip install -U uv` (devcontainer `postCreateCommand`) | unpinned and auto-upgrading |
+| Phase-0-Python-Curriculum.md:2713, 2755, 2845, 2985 | `pip`/`uv pip install httpx openai python-dotenv` | unpinned |
+| Phase-0-Python-Curriculum.md:2714 | `pip install "openai>=1.0"` | open-ended lower bound |
 
-No test files, no `requirements.txt`, no `Makefile`, no `pytest.ini`, no `Dockerfile`. The curriculum documents describe exercises and labs but contain no runnable code or assertions to execute.
+Recommendation: if learner projects are committed here, add a `requirements.txt` or `pyproject.toml` with pins and a lock file (`uv lock`).
+I did not check version currency against the registries.
 
----
+## 4. Security smells
 
-## 3. Dependencies
+- **Secrets in files:** none found. A search for key, token and private-key patterns (`sk-…`, `AKIA…`, `BEGIN … PRIVATE KEY`) matched only prose. No `.env` file is tracked.
+- **`.gitignore`:** it covers `.env`, `.venv/`, `logs/` and `transcripts/`. It does not cover `*.pem`, `*.key`, `.azure/`, or `*.tfstate`. Consider adding them, since the curriculum involves Azure credentials.
+- **Unpinned container images** in example snippets:
+  - Azure-AI-Learning-Path-2026.md:1725: `mcr.microsoft.com/azure-cognitive-services/textanalytics/sentiment:latest`
+  - Azure-AI-Learning-Path-2026.md:1803: `ollama/ollama:latest`
 
-**None.** No dependency manifests (`requirements.txt`, `package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, etc.) exist. This is a documentation-only repo.
-
-The `.gitignore` references `.venv/`, `*.pyc`, and `logs/` — implying Python development occurs elsewhere or was transient.
-
----
-
-## 4. Security Smells
-
-| Check | Result |
-|---|---|
-| Hardcoded secrets / API keys | **None.** No `.env` files or credential strings found anywhere. |
-| World-writable files | **None.** All files `644`; all directories `755`. |
-| Unpinned container images | **N/A** — no Dockerfiles or compose files. |
-| `.gitignore` hygiene | ✅ Ignores `.env`, `.venv/`, `__pycache__/`, `*.pyc`, `logs/`, `transcripts/`, `.DS_Store`. |
-| Public links in docs | ⚠️ `docs/Azure-AI-Learning-Path-2026.md` contains 30+ Microsoft Learn URLs. These are fine (public docs), but note that linked cert exams and pages may go stale as Microsoft retires/rebrands them (the doc itself flags several retirements). |
-
----
+  Pin to a version tag or a digest.
+- **Broad permissions:** no `chmod 777`, `curl | sh`, or privileged-container patterns found.
+- **Personal data:** the docs mention a specific employer tenant ("HYLIFE") by name, at Azure-AI-Learning-Path-2026.md:61. This is not a secret, but review it before making the repo public.
 
 ## Summary
 
-This is a **documentation-only repository** — two markdown files covering Azure AI certification preparation and a Python pre-work curriculum. No code to run, no dependencies to pin, no test suite, no secrets, and no permission issues. Trivially clean.
+| Area | Result |
+|---|---|
+| TODO/FIXME | 0 |
+| Tests | none exist |
+| Unpinned deps | 6 kinds of install command, in docs only |
+| Secrets | none |
+| Unpinned images | 2 (`:latest`) |
